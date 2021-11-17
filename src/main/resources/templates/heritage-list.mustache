@@ -1,0 +1,341 @@
+{{>layout/header}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.min.js"></script>
+<style>
+    .hide {
+        display: none;
+    }
+
+    .box {
+        height: 200px;
+        line-height: 20px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 7;
+    <!-- 5 번째 줄에 . . . --> -webkit-box-orient: vertical;
+    }
+
+    .lib-panel {
+        margin-bottom: 20Px
+    }
+
+    .lib-panel img {
+        width: 100%;
+        height: 250px;
+        background-color: transparent
+    }
+
+    .lib-panel .row,
+    .lib-panel .col-md-6 {
+        padding: 0;
+        background-color: #FFFFFF
+    }
+
+    .lib-panel .lib-row {
+        padding: 0 20px 0 20px
+    }
+
+    .lib-panel .lib-row.lib-header {
+        background-color: #FFFFFF;
+        font-size: 20px;
+        padding: 10px 20px 0 20px
+    }
+
+    .lib-panel .lib-row.lib-header .lib-header-seperator {
+        height: 2px;
+        width: 26px;
+        background-color: #d9d9d9;
+        margin: 7px 0 7px 0
+    }
+
+    .lib-panel .lib-row.lib-desc {
+        position: relative;
+        height: 100%;
+        display: block;
+        font-size: 13px
+    }
+
+    .lib-panel .lib-row.lib-desc a {
+        position: absolute;
+        width: 100%;
+        bottom: 10px;
+        left: 20px
+    }
+
+    .row-margin-bottom {
+        margin-bottom: 20px
+    }
+
+    .box-shadow {
+
+        -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, .10);
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, .10)
+    }
+
+    .no-padding {
+        padding: 0
+    }
+
+    .head-group {
+        justify-content: center;
+        align-items: center;
+    }
+
+    /*.search-bar {*/
+    /*    width: 600px;*/
+    /*    padding: 10px;*/
+    /*    !*margin-right: 15px;*!*/
+    /*}*/
+
+    /*검색창 디자인*/
+    h1 {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 20px;
+    }
+
+    h1 span:nth-child(1) {
+        /*color: #f89b50;*/
+        /*color: #CF815B*/
+        /*todo 문화재를 검색해보세요 글자 색상*/
+    }
+
+    h2 {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-top: 15px;
+        font-size: 20px;
+    }
+
+    h2 span:nth-child(1) {
+        color: #fe6872;
+    }
+
+    h4 {
+        color: black;
+    }
+
+    /*
+  *
+  * ==========================================
+  * CUSTOM UTIL CLASSES
+  * ==========================================
+  *
+  */
+
+    /* List with bullets */
+    .list-bullets {
+        list-style: none;
+    }
+
+    .list-bullets li {
+        display: flex;
+        align-items: center;
+    }
+
+    .list-bullets li::before {
+        content: '';
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #5784d7;
+        border: 2px solid #8fb3f5;
+        display: block;
+        margin-right: 1rem;
+    }
+
+    /* Unordered list with custom numbers style */
+    ol.custom-numbers {
+        list-style: none;
+    }
+
+    ol.custom-numbers li {
+        counter-increment: my-awesome-counter;
+    }
+
+    ol.custom-numbers li::before {
+        content: counter(my-awesome-counter) ". ";
+        color: #2b90d9;
+        font-weight: bold;
+    }
+
+    .myContent {
+
+    }
+
+    /*
+    *
+    * ==========================================
+    * FOR DEMO PURPOSES
+    * ==========================================
+    *
+    */
+
+    body {
+        min-height: 100vh;
+        /*background-color: #6190e8;*/
+        /*background-image: linear-gradient(to right, #5784d7 0%, #a7bfe8 100%);*/
+    }
+
+
+    .lib-img-show {
+        margin: auto;
+        object-fit: cover;
+        height: auto;
+        width: 90%;
+
+    }
+
+    .line-limit {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 10; /* number of lines to show */
+        -webkit-box-orient: vertical;
+    }
+
+    .card-body {
+        overflow: auto;
+        height: auto;
+    }
+
+</style>
+
+
+<div class="container py-5">
+    <!-- For demo purpose -->
+    <header class="text-center text-white">
+        <h4 class="display-5">문화재를 검색해보세요</h4>
+        <div class="col-lg-10 mx-auto">
+            <form action="" method="POST">
+                <div class="mx-auto search-bar input-group p-6 mt-4">
+                    <input id="search-keyword" name="q" type="text" class="form-control rounded-pill"
+                           placeholder="문화재 이름이나 내용의 키워드를 검색해보세요."
+                           aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <input class="btn btn-success search-btn ml-2" type="submit" value="검색" id="btn-round">
+                    <div class="input-group-append">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <h2>
+            <span></span>
+        </h2>
+
+    </header>
+
+    <!--section 번호 페이지네이션-->
+
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination d-flex justify-content-center" id="pagination-div">
+
+
+        </ul>
+    </nav>
+
+
+    <div id="heritage_card">
+        {{#heritageList}}
+            <div class="row mt-4"><div class="col-lg-10 mx-auto">
+                    <div class="card shadow mb-1">
+                        <div class="card-body p-5 row align-items-center">
+                            <div class="col-md-12">
+                                <h4 class="mb-4 ">{{ccbaMnm1}}</h4>
+                            </div><div class="col-md-5 ">
+                                <img class="lib-img-show" src={{imageUrl}}>
+                            </div>
+                            <div class="col-md-7 align-items-center">
+                                <p class="mb-2 h5 align-middle line-limit">{{content}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/heritageList}}
+    </div>
+</div>
+<ul class="pagination justify-content-center">
+    <li class="page-item">
+        <a class="page-link" href="?page={{previous}}">Previous
+        </a>
+    </li>
+    {{#check}}
+        <li class="page-item">
+            <a class="page-link" href="?page={{next}}">Next
+            </a>
+        </li>
+    {{/check}}
+    {{^check}}
+        <li class="page-item disabled">
+            <a class="page-link" href="?page={{next}}">Next</a></li>
+        <a class="page-link" href="?page={{next}}">Next</a>
+        </li>
+    {{/check}}
+</ul>
+
+<script>
+
+    // desc 검색 버튼 클릭
+    $(".search-btn").on("click", function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: "GET",
+            url: "getHeritageList",
+            dataType: "json",
+
+            data: {
+                keyword: $('#search-keyword').val()
+            },
+            success: function (data) {
+                console.log("data")
+                console.log(data)
+                $('h2 span').text("'" + $('#search-keyword').val() + "'" + " 검색 결과가 " + data.length + "개 검색되었습니다.")
+                $('h1 span').text("")
+
+                // 검색 키워드 결과 null일 때 처리
+                if (data.length === 0) {
+                    alert("결과가 없습니다");
+                    return;
+                }
+                $('.page-item').addClass('disabled')
+
+                $('#heritage_card').html('');
+
+                let text = ''
+
+                // let obj = data.content
+                $.each(data, function (index, obj) {
+                    // console.log("obj = " + obj)
+
+                    text += '<div class="row mt-4"><div class="col-md-10 mx-auto"><div class="card shadow mb-1"><div class="card-body p-5 row align-items-center"><div class="col-md-12">'
+                    text += '<h4 class="mb-4">' + obj.ccbaMnm1
+                    text += '</h4></div><div class="col-md-5 "><img class="lib-img-show "  src="' + obj.imageUrl + '"/>'
+                    text += '</div><div class="col-md-7 align-items-center"><p class="mb-2 h5 align-middle line-limit">' + obj.content
+                    text += '</p></div></div> </div></div> </div>'
+
+
+                })
+                // console.log(text)
+
+                $('#heritage_card').html(text);
+
+
+            }
+            ,
+            error: function (request, status, error) {
+                console.log('error getKeywordForDataList');
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+
+            }
+        });
+    });
+
+
+</script>
+
+{{>layout/footer}}

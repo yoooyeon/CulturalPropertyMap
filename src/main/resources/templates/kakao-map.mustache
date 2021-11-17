@@ -1,0 +1,158 @@
+{{>layout/header}}
+
+<!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"-->
+<!--      integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="css/map/map.css">
+
+<!-- section 지도-->
+<div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+     class="modal fade text-left">
+    <div role="document" class="modal-dialog modal-lg">
+        <div class="modal-content modal-fullsize">
+            <!-- section: Tab-->
+            <div class="modal-header row d-flex justify-content-between mx-1 mx-sm-3 mb-0 pb-0 border-0">
+
+                <div class="tabs" id="tab02">
+                    <h6 class="text-muted">문화재청</h6>
+                </div>
+            </div>
+            <div class="line"></div>
+            <!--section: Tab Body-->
+            <div class="modal-body p-0">
+
+
+                <!-- section: 문화재청-->
+                <fieldset id="tab021">
+                    <div class="bg-light">
+                        <h5 class="text-center mb-4 mt-0 pt-4 modal-title modal-heritage-title-public"
+                            id="myModalLabel ">문화재 이름</h5>
+
+                    </div>
+                    <div class="px-3">
+                        <!--                        <div style="text-align: center; padding-top: 3px">이미지</div>-->
+                        <div class="line2"></div>
+
+                        <div class="modal-img-public"> 이미지가 없습니다.</div>
+                        <!--                        <div style="text-align: center; padding-top: 3px">로드뷰</div>-->
+                        <div class="line2"></div>
+
+                        <!-- 로드뷰를 표시할 div 입니다 -->
+                        <div id="roadview" style="width:100%;height:300px;"></div>
+                        <div>
+
+                            <table class="table">
+
+                                <tbody>
+                                <tr>
+                                    <th scope="row">소재지</th>
+                                    <td class="modal-ccbaLcad-public">소재지 정보가 없습니다.</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">시대</th>
+                                    <td class="modal-ccceName-public">시대 정보가 없습니다.</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">문화재 종목</th>
+                                    <td class="modal-ccmaName-public">문화재 종목 정보가 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+                        <div class="modal-content-public m-3" style="font-size: 1.2em"> 내용이 없습니다.</div>
+                        <div class="modal-tags-public" style="margin-bottom: 2px;margin-top: 2px">
+                            <div id="modal-tags-public" class="row"></div>
+                        </div>
+
+                        <hr style="height: 3px"/>
+                        <div class="time-table">
+                            <h4>이 시기의 사건들</h4>
+                            <table class="table">
+                                <thead>
+                                <tr class="m-0">
+                                    <th style="width: 13%" scope="col">시기</th>
+                                    <th style="width: 29%" scope="col">사건</th>
+                                    <th style="width: 58%" scope="col">설명</th>
+                                </tr>
+                                </thead>
+                                <tbody class="time-table-tbody">
+                                <!-- desc 연표데이터 이어붙이기-->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="more-time-info" class="btn btn-sm btn-info float-right px-2 pb-2 m-3">연표 정보
+                            더보기
+                        </button>
+
+                    </div>
+                </fieldset>
+            </div>
+            <div class="line"></div>
+            <!-- section: modal footer-->
+            <div class="modal-footer d-flex flex-column justify-content-end border-0">
+
+                <button id="close-button" type="button" class="btn btn-default" data-dismiss="modal"
+                        style="float: right">Close
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- For demo purpose -->
+    <header class="text-center text-white m-2">
+        <h4 class="display-5">문화재를 검색해보세요</h4>
+        <div class="col-lg-7 mx-auto">
+            <form action="" method="POST">
+                <div class="mx-auto search-bar input-group p-6 mt-4">
+                    <input id="search-keyword" name="q" type="text" class="form-control rounded-pill search-keyword"
+                           placeholder="문화재 이름이나 시대를 검색해보세요."
+                           aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <input class="btn btn-success search-btn ml-2" type="submit" value="검색" id="btn-round">
+                    <div class="input-group-append">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <h2 class="mt-4">
+            <span></span>
+        </h2>
+
+    </header>
+</div>
+
+
+<div class=" head-group mb-4">
+    <div class="row d-flex justify-content-center mb-4">
+        <button type="button" id="here" class="btn btn-danger" value="here" style="margin-left: 10px">내 주변 문화재 보기
+        </button>
+        <button class="btn btn-outline-primary" onclick="ccceToggle()">시대별 지도 보기</button>
+        <div id="checkbox-group">
+            <div>
+                <button class="btn btn-outline-success ccce-btn" value="prehistory">선사시대</button>
+                <button class="btn btn-outline-success ccce-btn" value="samkook">삼국시대/가야</button>
+                <button class="btn btn-outline-success ccce-btn" value="balhae">통일신라/발해</button>
+                <button class="btn btn-outline-success ccce-btn" value="goryeo">고려시대</button>
+                <button class="btn btn-outline-success ccce-btn" value="joseon">조선시대</button>
+            </div>
+
+        </div>
+    </div>
+    <!--section check box-->
+
+    <div class="row d-flex justify-content-center">
+        <div id="map"></div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=21fe492d0acd4e2194c4448b9796bb1c"></script>
+<script type="text/javascript" src="js/map/map.js"></script>
+{{>layout/footer}}
+

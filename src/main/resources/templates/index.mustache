@@ -1,0 +1,806 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>문화재 지도</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body class="h-100">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet">
+
+<style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .nav-link {
+        color: #FFF;
+        width: 100%;
+        height: 100%;
+        text-transform: uppercase;
+    }
+
+    .nav-link::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 2px;
+        background: #2c5990;
+        transition: width .3s;
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    .navbar-nav > .active > a {
+        color: #1E2F97;
+    }
+
+    .nav-item {
+        font-size: 23px;
+
+    }
+
+    .carousel-item {
+        height: 100%;
+    }
+</style>
+
+<div id="nav-wrapper"
+     style="background: url('https://firebasestorage.googleapis.com/v0/b/photo-school-ff482.appspot.com/o/header_132.jpg?alt=media&token=a789097e-c3d3-43a3-b674-9dd966e79300') no-repeat 50% 0;">
+    <nav class="navbar navbar-expand-lg navbar-light" style="height: 500px">
+        <div class="container-fluid ">
+
+            <div style="position: absolute;bottom: 0;left: 0">
+<!--                style="position: absolute; bottom: 0"-->
+                <ul class="navbar-nav ms-auto mt-2 mt-lg-0 mb-0" >
+
+                    <li class="nav-item active"><a class="nav-link" href="/" style="color: whitesmoke">Home</a></li>
+                    <!--                <li class="nav-item"><a class="nav-link" href="/mypage">My Page</a></li>-->
+                    <li class="nav-item"><a class="nav-link" href="/map" style="color: whitesmoke">문화재 지도</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/heritage/list" style="color: whitesmoke">문화재 목록</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/timeline" style="color: whitesmoke">연표</a></li>
+
+                </ul>
+            </div>
+            <div class="row mr-4 mb-4"
+                 style="display: flex; align-items: center; position: absolute; bottom: 0 ; right:0">
+                {{#userName}}
+                    <img src="{{userImg}}" class="rounded-circle " style="height: 40px"/>
+
+                    <div class="col mr-2"><span id="user" style="color: whitesmoke;  font-size: 23px;">{{userName}}님 환영합니다!</span>
+                    </div>
+
+                    <div><a href="/logout" class="btn btn-info active" role="button" style="font-size: 21px;">Logout</a>
+                    </div>
+                {{/userName}}
+                {{^userName}}
+                    <a href="/oauth2/authorization/google" class="btn btn-success active" role="button"
+                       style=" font-size: 23px;">Google Login</a>
+                {{/userName}}
+            </div>
+
+        </div>
+    </nav>
+</div>
+<script>
+    $("ul.navbar-nav li").on("click", function () {
+        $("ul.navbar-nav li").find(".active").removeClass("active");
+        $(this).parent().addClass("active");
+    });
+</script>
+
+    <!--홈화면 꾸미기 위한 링크-->
+    <link href='https://fonts.googleapis.com/css?family=Raleway:400,800,300' rel='stylesheet' type='text/css'>
+    <style>
+        body {
+            background-image: none;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            /*max-width: 1800px;*/
+        }
+
+        html {
+            height: 100%;
+
+        }
+
+        body {
+            height: 100%;
+            /*background-color: #c2d7d0;*/
+        }
+
+        body span {
+            display: flow;
+            /*// inline-block으로 설정 필요*/
+        }
+
+        h3 {
+            color: #304D63;
+        }
+
+        h5 {
+            padding: 7px;
+            margin-left: 7px;
+            /*margin: auto;*/
+        }
+
+        .container {
+            margin-top: 15px;
+        }
+
+
+        .card-img-top {
+            width: 100%;
+            height: 150px;
+        }
+
+
+        .card-text {
+            /*text-overflow: ellipsis;*/
+            font-size: 19px;
+            /*white-space: nowrap;*/
+            /*overflow: hidden;*/
+        }
+
+
+        #heritage-card {
+            height: 300px;
+        }
+
+        .card-text {
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            /*white-space: nowrap;*/
+            white-space: normal;
+            /*line-height: 1.2;*/
+            /*height: 3.6em;*/
+            text-align: left;
+            word-wrap: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+
+        }
+
+        /*홈화면 꾸미기 css*/
+
+        .grid {
+            position: relative;
+            margin: 0 auto;
+            /*padding: 1em 0 4em;*/
+            max-width: 1000px;
+            list-style: none;
+            text-align: center;
+        }
+
+        /* Common style */
+        .grid figure {
+            position: relative;
+            float: left;
+            overflow: hidden;
+            /*margin: 10px 1%;*/
+            min-width: 320px;
+            /*max-width: 480px;*/
+            /*max-height: 360px;*/
+            width: 100%;
+            /*background: #3085a3;*/
+            text-align: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .grid figure img {
+            position: relative;
+            display: block;
+            justify-content: center;
+            width:100%;
+            min-height: 100%;
+            max-width: 100%;
+            opacity: 0.8;
+        }
+
+        .grid figure figcaption {
+            padding: 2em;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 1.25em;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .grid figure figcaption::before,
+        .grid figure figcaption::after {
+            pointer-events: none;
+        }
+
+
+        .grid figure h2 {
+            word-spacing: -0.15em;
+            font-weight: 300;
+        }
+
+        .grid figure h2 span {
+            font-weight: 800;
+        }
+
+        .grid figure h2,
+        .grid figure p {
+            margin: 0;
+        }
+
+        .grid figure p {
+            letter-spacing: 1px;
+            font-size: 68.5%;
+        }
+
+        /* Individual effects */
+
+
+        /*---------------*/
+        /***** Sadie *****/
+        /*---------------*/
+
+        figure.effect-sadie figcaption::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: -webkit-linear-gradient(top, rgba(72, 76, 97, 0) 0%, rgba(72, 76, 97, 0.8) 75%);
+            background: linear-gradient(to bottom, rgba(72, 76, 97, 0) 0%, rgba(72, 76, 97, 0.8) 75%);
+            content: '';
+            opacity: 0;
+            -webkit-transform: translate3d(0, 50%, 0);
+            transform: translate3d(0, 50%, 0);
+        }
+
+        figure.effect-sadie h2 {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            color: #484c61;
+            -webkit-transition: -webkit-transform 0.35s, color 0.35s;
+            transition: transform 0.35s, color 0.35s;
+            -webkit-transform: translate3d(0, -50%, 0);
+            transform: translate3d(0, -50%, 0);
+        }
+
+        figure.effect-sadie figcaption::before,
+        figure.effect-sadie p {
+            -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+            transition: opacity 0.35s, transform 0.35s;
+        }
+
+        figure.effect-sadie p {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            padding: 2em;
+            width: 100%;
+            opacity: 0;
+            -webkit-transform: translate3d(0, 10px, 0);
+            transform: translate3d(0, 10px, 0);
+        }
+
+        figure.effect-sadie:hover h2 {
+            color: #fff;
+            -webkit-transform: translate3d(0, -50%, 0) translate3d(0, -40px, 0);
+            transform: translate3d(0, -50%, 0) translate3d(0, -40px, 0);
+        }
+
+        figure.effect-sadie:hover figcaption::before,
+        figure.effect-sadie:hover p {
+            opacity: 1;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+
+
+        figure.effect-zoe h2 {
+            display: inline-block;
+        }
+
+        figure.effect-zoe:hover p.description {
+            opacity: 1;
+        }
+
+        figure.effect-zoe:hover figcaption,
+        figure.effect-zoe:hover h2,
+        figure.effect-zoe:hover p.icon-links a {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
+
+        figure.effect-zoe:hover h2 {
+            -webkit-transition-delay: 0.05s;
+            transition-delay: 0.05s;
+        }
+
+        figure.effect-zoe:hover p.icon-links a:nth-child(3) {
+            -webkit-transition-delay: 0.1s;
+            transition-delay: 0.1s;
+        }
+
+        figure.effect-zoe:hover p.icon-links a:nth-child(2) {
+            -webkit-transition-delay: 0.15s;
+            transition-delay: 0.15s;
+        }
+
+        figure.effect-zoe:hover p.icon-links a:first-child {
+            -webkit-transition-delay: 0.2s;
+            transition-delay: 0.2s;
+        }
+
+        figure img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        a {
+            outline: none;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover, a:focus {
+            color: #528cb3;
+        }
+
+        section {
+            padding: 1em;
+            text-align: center;
+        }
+
+        .content {
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        .content > h2 {
+            clear: both;
+            margin: 0;
+            padding: 4em 1% 0;
+            color: #484B54;
+            font-weight: 800;
+            font-size: 1.5em;
+        }
+
+        .content > h2:first-child {
+            padding-top: 0em;
+        }
+
+
+        @media screen and (max-width: 25em) {
+            .codrops-header {
+                font-size: 75%;
+            }
+
+            .codrops-icon span {
+                display: none;
+            }
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 16vw;
+            object-fit: cover;
+        }
+
+
+    </style>
+    <script>
+        function getPublicDataTag(no) {
+            $.ajax({
+                type: "POST",
+                url: "getPublicDataTag",
+                data: {
+                    no: no
+                },
+                success: function (result) {
+                    console.log("index getPublicDataTag")
+
+                    console.log(result)
+
+                    let text = ""
+                    $.each(result, function (index, obj) {
+
+                        text += '<h5><span id="card-tags" class="badge badge-warning badge-secondary" style="margin-right: 3px"> #' + obj + '</span></h5>'
+                    })
+                    console.log(text)
+                    return text
+                },
+                error: function (result) {
+                    console.log('error index getPublicDataTag');
+                }
+            });
+
+        }
+
+        function getCurPosIndex() {
+
+            if (navigator.geolocation) {
+
+                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+                    let lati = position.coords.latitude; // 위도
+                    let longi = position.coords.longitude; // 경도
+
+                    // alert("현재위치: "+lati+" "+ longi)
+
+
+                    $.ajax({
+                        url: "getCurPosIndex",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8;",
+                        type: "POST",
+                        data: JSON.stringify({
+                            lat: lati,
+                            lon: longi
+                        }),
+                        success: function (data) {
+                            console.log("sucess getCurPosIndex")
+                            if (data.length === 0) {
+
+                                $('#noti_recom').show()
+                                $('#loading').hide()
+                                return
+                            }
+                            $('#noti_recom').hide()
+                            $('#loading').show()
+
+                            // console.log(data)
+                            console.log()
+                            $('#recommDiv').html("") // 비우기
+                            let text = ''
+
+                            let tag_text = ''
+                            let imgUrl = ''
+                            let ccbaMnm1 = ''
+                            let content = ''
+                            $.each(data, function (index, obj) {
+                                content = obj.content;
+                                imgUrl = obj.imageUrl;
+                                ccbaMnm1 = obj.ccbaMnm1
+                                let tags = (obj.tags).split("/");
+                                // console.log("tags = " + tags)
+                                text += '<div class="col-md-4 py-2"><div class="card mb-2 h-100"><img class="card-img-top"'
+                                text += 'src="' + imgUrl + '" alt="Card image cap"><div class="card-body"><h4 class="card-title">'
+                                text += ccbaMnm1 + '</h4><p class="card-text">' + content + '</p><div class="row d-flex justify-content-start ml-auto">'
+
+                                $.each(tags, function (index, tag) {
+                                    if (index === 0) return
+                                    text += '<h4><span id="card-tags" class="badge badge-warning badge-secondary" style="margin: 2px"> #' + tag + '</span></h4>'
+                                })
+                                text += '</div></div></div></div>'
+                                // text += obj.tags
+                                // tag_text = getPublicDataTag(obj.no)
+                                // console.log("tag_text")
+                                // console.log(tag_text)
+                                // text += tag_text
+
+                            })
+                            // console.log(text)
+                            // console.log(text)
+                            $('#recommDiv').html(text)
+
+
+                        },
+                        error: function (request, status, error) {
+
+                            console.log('error getCurPosIndex');
+                            console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+
+
+                        }
+                    });
+
+                });
+
+            } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+
+                console.log("현재 위치를 사용할 수 없습니다.")
+            }
+
+        }
+    </script>
+
+    <!--section 로그인을 했을 경우 서비스 제공-->
+    {{#userName}}
+
+        <!--안보이게-->
+        <script>
+            getCurPosIndex(); // 현재 위치 가져오기
+
+            // console.log("remove")
+            document.body.style.background = "none";
+            $('#nav-wrapper').css("background", "#1A1B5E");
+            // $('#nav-wrapper').background="#1A1B5E";
+
+            $('.navbar').height('80px');
+
+            // document.body.style.removeProperty('backgroundImage')
+            // document.body.style.removeProperty('style')
+            // document.body.style.backgroundImage='white';
+            // document.body.style.background="url('http://www.cha.go.kr/unisearch/images/history_site/1624572.jpg') no-repeat 0 0";
+
+
+        </script>
+
+        <div class="container ">
+
+            <h3>최근에 열람한 문화재</h3>
+
+            <div class="row">
+                {{#heritagesByReadingList}}
+                    <div class="col-md-4 py-2">
+                        <div class="card mb-2 h-100">
+                            <img class="card-img-top"
+                                 src="{{imageUrl}}"
+                                 alt="Card image cap">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ccbaMnm1}}</h4>
+                                <p class="card-text">{{content}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {{/heritagesByReadingList}}
+                {{^heritagesByReadingList}}
+                    <h4 id="noti" class="ml-4 mt-4">문화재를 검색, 열람 해보세요</h4>
+
+                {{/heritagesByReadingList}}
+            </div>
+            <hr/>
+
+            <h3>추천 문화재</h3>
+            <h4 id="noti_recom" class="ml-4 mt-4">문화재를 검색, 열람 해보세요</h4>
+            <!--Slides-->
+            <!--First slide-->
+            <div class="row" id="recommDiv">
+                <h4 class="px-3" id="loading">로딩중... </h4>
+
+            </div>
+
+            <!--/.Carousel Wrapper-->
+
+
+            <!--Slides-->
+
+
+            <!--/.Carousel Wrapper-->
+            <hr/>
+
+            <h3> # {{#tagName}} {{tagName}} {{/tagName}} 태그 문화재</h3>
+
+            <div class="row">
+                {{#tagHeritage}}
+                    <div class="col-md-4 py-2">
+                        <div class="card mb-2 h-100">
+                            <img class="card-img-top"
+                                 src="{{imageUrl}}"
+                                 alt="Card image cap">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ccbaMnm1}}</h4>
+                                <p class="card-text">{{content}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {{/tagHeritage}}
+            </div>
+
+
+        </div>
+        <!--todo-->
+        <!--<h5>내 주변의 문화재</h5>-->
+
+
+    {{/userName}}
+    {{^userName}}
+        <!--section 로그인을 하지 않았을 경우 이미지-->
+        <script>
+            console.log("로그인x 배경화면")
+
+
+
+        </script>
+
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,800,300' rel='stylesheet' type='text/css'>
+
+
+
+
+
+        <div class="container my-4 mt-4" >
+
+
+
+            <!--Carousel Wrapper-->
+            <div id="multi-item-example" class="carousel slide carousel-multi-item" data-ride="carousel">
+
+                <!--Controls-->
+                <div class="controls-top">
+                    <a class="btn-floating" href="#multi-item-example" data-slide="prev"><i class="fa fa-chevron-left carousel-control-prev"></i></a>
+                    <a class="btn-floating" href="#multi-item-example" data-slide="next"><i class="fa fa-chevron-right carousel-control-next"></i></a>
+                </div>
+                <!--/.Controls-->
+
+                <!--Indicators-->
+                <ol class="carousel-indicators">
+                    <li data-target="#multi-item-example" data-slide-to="0" class="active"></li>
+                    <li data-target="#multi-item-example" data-slide-to="1"></li>
+                    <li data-target="#multi-item-example" data-slide-to="2"></li>
+                </ol>
+                <!--/.Indicators-->
+
+                <!--Slides-->
+                <div class="carousel-inner" role="listbox">
+
+                    <!--First slide-->
+                    <div class="carousel-item active">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201223163942173_1HSBRZDX.jpg"
+                                         alt="창덕궁 인정전p">
+                                    <div class="card-body">
+                                        <h4 class="card-title">창덕궁 인정전</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 clearfix d-none d-md-block">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201223164517567_Y0VNZ9ZI.jpg"
+                                         alt="종묘">
+                                    <div class="card-body">
+                                        <h4 class="card-title">종묘</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 clearfix d-none d-md-block">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230155709800_0KAP9CA6.png"
+                                         alt="불국사">
+                                    <div class="card-body">
+                                        <h4 class="card-title">불국사</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--/.First slide-->
+
+                    <!--Second slide-->
+                    <div class="carousel-item">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230155737757_E18HJ1SD.png"
+                                         alt="석굴암">
+                                    <div class="card-body">
+                                        <h4 class="card-title">석굴암</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 clearfix d-none d-md-block">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230232339388_I7OTWGYE.png"
+                                         alt="일성록">
+                                    <div class="card-body">
+                                        <h4 class="card-title">일성록</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 clearfix d-none d-md-block">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230152504156_OZ9KY6SP.png"
+                                         alt="도산서원">
+                                    <div class="card-body">
+                                        <h4 class="card-title">도산서원</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--/.Second slide-->
+
+                    <!--Third slide-->
+                    <div class="carousel-item">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230232450580_6D31YFX9.png"
+                                         alt="팔만대장경p">
+                                    <div class="card-body">
+                                        <h4 class="card-title">팔만대장경</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 clearfix d-none d-md-block">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230153146562_ZMFVG1HV.png"
+                                         alt="아리랑">
+                                    <div class="card-body">
+                                        <h4 class="card-title">아리랑</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 clearfix d-none d-md-block">
+                                <div class="card mb-2">
+                                    <img class="card-img-top" src="https://newsroom.korea.net/upload/content/editImage/20201230231808970_7P1TSDNW.png"
+                                         alt="훈민정음">
+                                    <div class="card-body">
+                                        <h4 class="card-title">훈민정음</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--/.Third slide-->
+
+                </div>
+                <!--/.Slides-->
+
+            </div>
+            <!--/.Carousel Wrapper-->
+
+
+        </div>
+
+
+    {{/userName}}
+
+
+
+    <div class="d-none" id="map"></div>
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=21fe492d0acd4e2194c4448b9796bb1c"></script>
+    <!--<script type="text/javascript" src="js/map/map.js"></script>-->
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <!--<script src="js/scripts.js"></script>-->
+</body>
+</html>

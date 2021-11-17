@@ -1,0 +1,23 @@
+{{>layout/header}}
+
+<table class="table table-horizontal table-bordered">
+    <thead class="thead-strong">
+    <tr>
+        <th>#</th>
+        <th>검색어</th>
+        <th>검색 횟수</th>
+        <th>마지막 검색일</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+    {{#searchHistories}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{searchKeyword}}</td>
+            <td>{{count}}</td>
+            <td>{{modifiedDate}}</td>
+        </tr>
+    {{/searchHistories}}
+    </tbody>
+</table>
+{{>layout/footer}}
